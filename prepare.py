@@ -3,8 +3,10 @@ import numpy as np
 
 from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer
+import sklearn.preprocessing
 
 from acquire import get_titanic_data, get_iris_data
+from wrangle import wrangle_telco
 
 ###################### Prep Iris Data ######################
 
@@ -104,3 +106,41 @@ def prep_mall_data(df):
     train_and_validate, test = train_test_split(df, test_size=.15, random_state=123)
     train, validate = train_test_split(train_and_validate, test_size=.15, random_state=123)
     return train, test, validate
+
+###################### Prep Telco Data ######################
+
+def telco_split(df):
+    train_and_validate, test = train_test_split(df, test_size=.12, random_state=123)
+    train, validate = train_test_split(train_and_validate, test_size=.12, random_state=123)
+    return train, validate, test
+
+def add_scaled_columns(train, validate, test, scaler, columns_to_scale):
+    new_column_names = [c + '_scales' for c in columns_to_scale]
+    scaler.fit(train[columns_to_scale])
+    
+    train = pd.concat([
+        train, pd.DataFrame(scaler.transform(train[columns_to_scale]), 
+                            columns=new_column_names, 
+                            index=train.index),], axis=1)
+    validate = pd.concat([
+        validate, pd.DataFrame(scaler.transform(validate[columns_to_scale]), 
+                            columns=new_column_names, 
+                            index=validate.index),], axis=1)
+    test = pd.concat([
+        test, pd.DataFrame(scaler.transform(test[columns_to_scale]), 
+                            columns=new_column_names, 
+                            index=test.index),], axis=1)
+    return train, validate, test
+
+def prep_telco_data():
+    df = wrangle_telco()
+
+    train, validate, test = telco_split(df)
+
+    scaler = sklearn.preprocessing.MinMaxScaler()
+
+    columns_to_scale = ['monthly_charges', 'tenure', 'total_charges']
+    
+    train, validate, test = add_scaled_columns(train, validate, test, scaler, columns_to_scale)
+
+    return train, validate, test
