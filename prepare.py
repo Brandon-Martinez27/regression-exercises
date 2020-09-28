@@ -132,7 +132,7 @@ def add_scaled_columns(train, validate, test, scaler, columns_to_scale):
                             index=test.index),], axis=1)
     return train, validate, test
 
-def prep_telco_data():
+def scale_telco_data():
     df = wrangle_telco()
 
     train, validate, test = telco_split(df)
