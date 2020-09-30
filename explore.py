@@ -35,6 +35,7 @@ def plot_categorical_and_continuous_vars(df, column_cont, column_cat, hue_arg):
     plot2 = sns.barplot(data=df, y=column_cont, x=column_cat, hue=hue_arg)
     plt.subplot(313)
     plot3 = sns.swarmplot(data=df, y=column_cont, x=column_cat, hue=hue_arg)
+    plt.tight_layout()
     return plot1, plot2, plot3
 
 def plot_categorical_vars(df, column1, column2, normalized_arg):
