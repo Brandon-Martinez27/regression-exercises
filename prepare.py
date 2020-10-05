@@ -115,7 +115,7 @@ def telco_split(df):
     return train, validate, test
 
 def add_scaled_columns(train, validate, test, scaler, columns_to_scale):
-    new_column_names = [c + '_scales' for c in columns_to_scale]
+    new_column_names = [c + '_scaled' for c in columns_to_scale]
     scaler.fit(train[columns_to_scale])
     
     train = pd.concat([
