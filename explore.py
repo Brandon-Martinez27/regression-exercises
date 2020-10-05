@@ -42,3 +42,22 @@ def plot_categorical_vars(df, column1, column2, normalized_arg):
     ct = pd.crosstab(column1, column2, normalize=normalized_arg)
     htmp= sns.heatmap(ct, cmap='Greens', annot=True, fmt='.1%')
     return htmp
+
+def select_kbest(X, y, n):
+    from sklearn.feature_selection import SelectKBest, f_regression
+    f_selector = SelectKBest(f_regression, k=n).fit(X, y)
+    X_reduced = f_selector.transform(X)
+    f_support = f_selector.get_support()
+    f_feature = X.iloc[:,f_support].columns.tolist()
+    return f_feature
+
+def rfe(X, y, n):
+    from sklearn.feature_selection import RFE
+    from sklearn.linear_model import LinearRegression
+    lm = LinearRegression()
+    rfe = RFE(lm, n)
+    X_rfe = rfe.fit_transform(X, y)
+    mask = rfe.support_
+    X_reduced_scaled_rfe = X.iloc[:,mask]
+    f_feature = X_reduced_scaled_rfe.columns.tolist()
+    return f_feature
